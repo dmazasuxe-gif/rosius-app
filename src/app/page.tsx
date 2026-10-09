@@ -30,9 +30,6 @@ export default function Home() {
           </nav>
 
           <div className="flex items-center gap-4">
-            <Button variant="outline" className="hidden md:inline-flex border-accent text-accent-foreground hover:bg-accent/10">
-              ROSIUS IA
-            </Button>
             <Link href="/consulta" className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2">
               Consultar mi caso
             </Link>

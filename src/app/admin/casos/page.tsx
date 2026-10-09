@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Plus, Search } from "lucide-react";
+import { getAllCases } from "@/app/actions";
+import { NewCaseDialog } from "@/components/admin/new-case-dialog";
+import { ManageCaseDialog } from "@/components/admin/manage-case-dialog";
 
 export const metadata = {
   title: "Gestión de Casos | ROSIUS Admin",
 };
-
-import { getAllCases } from "@/app/actions";
 
 export const instant = false;
 
@@ -30,9 +31,7 @@ export default async function AdminCasos() {
           <h1 className="text-3xl font-heading font-bold text-foreground">Casos y Expedientes</h1>
           <p className="text-muted-foreground mt-1">Administra los casos de tus clientes y sube actualizaciones.</p>
         </div>
-        <Button className="bg-primary hover:bg-primary/90 text-white flex items-center gap-2">
-          <Plus className="w-4 h-4" /> Nuevo Caso
-        </Button>
+        <NewCaseDialog />
       </div>
 
       <div className="bg-card border border-border/50 rounded-2xl shadow-sm overflow-hidden flex flex-col">
@@ -77,9 +76,7 @@ export default async function AdminCasos() {
                     {new Date(item.updated_at).toLocaleDateString("es-PE")}
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <Button variant="outline" size="sm" className="text-xs">
-                      Administrar
-                    </Button>
+                    <ManageCaseDialog caseId={item.id} />
                   </td>
                 </tr>
               )}) : (

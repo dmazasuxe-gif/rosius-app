@@ -78,7 +78,7 @@ export default function AdminAjustes() {
         </section>
 
         <div className="pt-4 border-t border-border/50 flex justify-end">
-          <Button className="bg-primary hover:bg-primary/90 text-white flex items-center gap-2">
+          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground flex items-center gap-2">
             <Save className="w-4 h-4" /> Guardar Cambios
           </Button>
         </div>

@@ -93,7 +93,7 @@ export default function ConsultaPage() {
                 {error && <p className="text-red-500 text-sm">{error}</p>}
 
                 <div className="space-y-4">
-                  <Button type="submit" disabled={loading} className="w-full h-12 bg-primary hover:bg-primary/90 text-white text-base shadow-md">
+                  <Button type="submit" disabled={loading} className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground text-base shadow-md">
                     {loading ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : "Solicitar código de acceso"}
                   </Button>
                   <p className="text-xs text-center text-muted-foreground leading-relaxed">
