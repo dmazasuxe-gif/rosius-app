@@ -183,3 +183,20 @@ export async function deleteCase(caseId: string) {
   revalidatePath("/admin/casos")
   return { success: true }
 }
+
+export async function saveSettings(settings: any) {
+  const updates = Object.keys(settings).map((key) => ({
+    key,
+    value: settings[key],
+    updated_at: new Date().toISOString()
+  }))
+  
+  const { error } = await supabase.from("site_settings").upsert(updates, { onConflict: 'key' })
+  
+  if (error) {
+    return { error: "Error al guardar ajustes." }
+  }
+  
+  revalidatePath("/")
+  return { success: true }
+}

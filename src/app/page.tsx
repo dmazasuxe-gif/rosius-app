@@ -1,8 +1,29 @@
 import { Button } from "@/components/ui/button";
 import { Scale, FileText, Newspaper, User, ChevronRight, ShieldCheck, Search } from "lucide-react";
 import Link from "next/link";
+import { supabase } from "@/lib/supabase";
 
-export default function Home() {
+export const instant = false;
+
+export default async function Home() {
+  const { data: settingsData } = await supabase.from("site_settings").select("*");
+  const settings: Record<string, string> = {
+    profile_image_url: "",
+    hero_title: "Dra. Rosita Ysela Maza Suxe",
+    hero_bio: "Soy abogada titulada por la Universidad..., con especialización en Derecho Civil y Penal. Mi compromiso es brindarte una defensa transparente, honesta y eficaz.",
+    contact_phone: "+51 999 999 999",
+    contact_email: "contacto@rosius.pe",
+    contact_address: "Av. Principal 123, Lima, Perú",
+  };
+
+  if (settingsData) {
+    settingsData.forEach((row) => {
+      settings[row.key] = row.value;
+    });
+  }
+
+  const cleanPhone = settings.contact_phone.replace(/\D/g, "");
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* HEADER */}
@@ -131,19 +152,20 @@ export default function Home() {
             <div className="flex flex-col md:flex-row gap-12 items-center">
               <div className="w-full md:w-1/3 flex justify-center">
                 <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-2xl overflow-hidden border-4 border-white shadow-2xl">
-                  {/* Imagen provisional hasta tener la real */}
-                  <div className="absolute inset-0 bg-gradient-to-tr from-secondary to-secondary/70 flex items-center justify-center text-white font-heading text-6xl">
-                    RM
-                  </div>
+                  {settings.profile_image_url ? (
+                    <img src={settings.profile_image_url} alt={settings.hero_title} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="absolute inset-0 bg-gradient-to-tr from-secondary to-secondary/70 flex items-center justify-center text-white font-heading text-6xl">
+                      RM
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="w-full md:w-2/3 space-y-6">
                 <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground">Sobre Mí</h2>
-                <h3 className="text-xl text-accent font-medium">Rosita Ysela Maza Suxe</h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  Soy abogada comprometida con la defensa de tus derechos. Mi objetivo es brindarte 
-                  asesoría jurídica transparente, eficiente y cercana, adaptada a tus necesidades particulares. 
-                  En ROSIUS, creo que la ley debe estar al alcance de todos para tomar las mejores decisiones.
+                <h3 className="text-xl text-accent font-medium">{settings.hero_title}</h3>
+                <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                  {settings.hero_bio}
                 </p>
                 <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border/50">
                   <div>
@@ -174,7 +196,7 @@ export default function Home() {
               Recuerda que este primer contacto no genera automáticamente una relación abogado-cliente.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
-              <a href="https://wa.me/51999999999" target="_blank" rel="noopener noreferrer">
+              <a href={`https://wa.me/${cleanPhone}`} target="_blank" rel="noopener noreferrer">
                 <Button size="lg" className="w-full sm:w-auto h-14 px-8 text-base bg-secondary hover:bg-secondary/90 text-white">
                   Contactar por WhatsApp
                 </Button>
@@ -215,7 +237,7 @@ export default function Home() {
               <ul className="space-y-1 text-xs text-white/70">
                 <li><Link href="/" className="hover:text-accent transition-colors">Privacidad</Link></li>
                 <li><Link href="/" className="hover:text-accent transition-colors">Términos</Link></li>
-                <li><a href="https://wa.me/51999999999" className="hover:text-accent transition-colors">Contacto</a></li>
+                <li><a href={`https://wa.me/${cleanPhone}`} className="hover:text-accent transition-colors">Contacto</a></li>
               </ul>
             </div>
           </div>
