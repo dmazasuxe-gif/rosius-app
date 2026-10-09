@@ -8,10 +8,15 @@ export default function Home() {
       {/* HEADER */}
       <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-md">
         <div className="container mx-auto px-4 h-20 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-3">
+            {/* Logo en versión clara para modo oscuro, versión oscura para modo claro */}
+            <div className="relative w-12 h-12 rounded-full overflow-hidden border border-border shadow-sm flex items-center justify-center bg-white">
+              <img src="/logo-light.png" alt="ROSIUS Logo" className="w-full h-full object-cover dark:hidden" />
+              <img src="/logo-dark.png" alt="ROSIUS Logo" className="w-full h-full object-cover hidden dark:block" />
+            </div>
             <div className="flex flex-col">
-              <span className="font-heading text-2xl font-bold tracking-widest text-primary">ROSIUS</span>
-              <span className="text-[10px] uppercase tracking-widest text-muted-foreground">La ley, a tu alcance</span>
+              <span className="font-heading text-xl font-bold tracking-widest text-primary">ROSIUS</span>
+              <span className="text-[9px] uppercase tracking-widest text-muted-foreground">La ley, a tu alcance</span>
             </div>
           </Link>
 
@@ -119,6 +124,65 @@ export default function Home() {
                   </Link>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* SOBRE MÍ SECTION */}
+        <section className="py-24 bg-muted/30">
+          <div className="container mx-auto px-4 max-w-5xl">
+            <div className="flex flex-col md:flex-row gap-12 items-center">
+              <div className="w-full md:w-1/3 flex justify-center">
+                <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-2xl overflow-hidden border-4 border-white shadow-2xl">
+                  {/* Imagen provisional hasta tener la real */}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-secondary to-secondary/70 flex items-center justify-center text-white font-heading text-6xl">
+                    RM
+                  </div>
+                </div>
+              </div>
+              <div className="w-full md:w-2/3 space-y-6">
+                <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground">Sobre Mí</h2>
+                <h3 className="text-xl text-accent font-medium">Rosita Ysela Maza Suxe</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  Soy abogada comprometida con la defensa de tus derechos. Mi objetivo es brindarte 
+                  asesoría jurídica transparente, eficiente y cercana, adaptada a tus necesidades particulares. 
+                  En ROSIUS, creo que la ley debe estar al alcance de todos para tomar las mejores decisiones.
+                </p>
+                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border/50">
+                  <div>
+                    <strong className="block text-foreground mb-1">Colegiatura</strong>
+                    <span className="text-muted-foreground text-sm">[Número de CAL o Colegio]</span>
+                  </div>
+                  <div>
+                    <strong className="block text-foreground mb-1">Especialidades</strong>
+                    <span className="text-muted-foreground text-sm">Derecho Civil, Penal, Laboral</span>
+                  </div>
+                </div>
+                <div className="pt-4">
+                  <Button variant="outline" className="border-secondary text-secondary hover:bg-secondary hover:text-white">
+                    Ver perfil completo
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* CONTACTO RÁPIDO */}
+        <section className="py-24 bg-background">
+          <div className="container mx-auto px-4 max-w-4xl text-center space-y-8">
+            <h2 className="font-heading text-3xl md:text-4xl font-bold">¿Necesitas asesoría legal?</h2>
+            <p className="text-muted-foreground">
+              Comunícate para analizar tu situación y encontrar la mejor estrategia legal. 
+              Recuerda que este primer contacto no genera automáticamente una relación abogado-cliente.
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
+              <Button size="lg" className="h-14 px-8 text-base bg-secondary hover:bg-secondary/90 text-white">
+                Contactar por WhatsApp
+              </Button>
+              <Button size="lg" variant="outline" className="h-14 px-8 text-base">
+                Formulario de Contacto
+              </Button>
             </div>
           </div>
         </section>
