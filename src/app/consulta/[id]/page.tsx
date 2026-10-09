@@ -12,19 +12,28 @@ type CaseUpdate = {
   is_internal_note: boolean;
 };
 
+type Document = {
+  id: string;
+  title: string;
+  storage_path: string;
+  is_public_to_client: boolean;
+  created_at: string;
+};
+
 type Case = {
   id: string;
   code: string;
   subject_type: string;
   status: string;
   case_updates?: CaseUpdate[];
+  documents?: Document[];
 };
 
 export default async function ClientDashboard({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
   const { data: client } = await supabase
     .from("clients")
-    .select("*, cases(*, case_updates(*, created_at))")
+    .select("*, cases(*, case_updates(*, created_at), documents(*, created_at))")
     .eq("id", resolvedParams.id)
     .single();
 
@@ -73,13 +82,13 @@ export default async function ClientDashboard({ params }: { params: Promise<{ id
                     </h2>
                     <p className="text-muted-foreground mt-1">{c.subject_type}</p>
                   </div>
-                  <span className="px-4 py-2 bg-secondary/10 text-secondary border border-secondary/20 rounded-full text-sm font-medium">
+                  <span className="px-4 py-2 bg-green-500/10 text-green-500 border border-green-500/30 shadow-[0_0_15px_rgba(34,197,94,0.3)] rounded-full text-sm font-bold tracking-wide">
                     {c.status}
                   </span>
                 </div>
 
                 <div className="space-y-4">
-                  <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">Últimas Actuaciones</h3>
+                  <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">Actualizaciones del Caso</h3>
                   {c.case_updates && c.case_updates.filter((u: CaseUpdate) => !u.is_internal_note).length > 0 ? (
                     <ul className="space-y-4">
                       {c.case_updates.filter((u: CaseUpdate) => !u.is_internal_note).map((update: CaseUpdate) => (
@@ -100,6 +109,34 @@ export default async function ClientDashboard({ params }: { params: Promise<{ id
                     <p className="text-sm text-muted-foreground">No hay actualizaciones recientes.</p>
                   )}
                 </div>
+
+                {c.documents && c.documents.filter((d: Document) => d.is_public_to_client).length > 0 && (
+                  <div className="mt-6 pt-6 border-t border-border/50">
+                    <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground mb-4">Documentos Adjuntos</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {c.documents.filter((d: Document) => d.is_public_to_client).map((doc: Document) => {
+                        const fileUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/documents/${doc.storage_path}`;
+                        return (
+                          <a 
+                            key={doc.id}
+                            href={fileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-3 p-3 rounded-xl border border-border/50 hover:bg-muted/30 transition-colors group"
+                          >
+                            <div className="bg-accent/10 p-2 rounded-lg text-accent group-hover:bg-accent group-hover:text-primary transition-colors">
+                              <FileText className="w-5 h-5" />
+                            </div>
+                            <div className="overflow-hidden">
+                              <p className="text-sm font-medium text-foreground truncate" title={doc.title}>{doc.title}</p>
+                              <p className="text-xs text-muted-foreground">{new Date(doc.created_at).toLocaleDateString("es-PE")}</p>
+                            </div>
+                          </a>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
