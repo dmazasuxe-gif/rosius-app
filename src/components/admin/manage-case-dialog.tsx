@@ -1,8 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { X, Upload, Activity, History, Settings, Trash2 } from "lucide-react"
+import { updateCaseStatus, deleteCase, getCaseUpdates } from "@/app/actions"
 
 type ManageCaseDialogProps = {
   caseId: string;
@@ -18,29 +19,49 @@ export function ManageCaseDialog({ caseId, currentStatus, code }: ManageCaseDial
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   
   const [activeTab, setActiveTab] = useState<"update" | "history" | "settings">("update")
+  const [history, setHistory] = useState<any[]>([])
+  const [historyLoaded, setHistoryLoaded] = useState(false)
+
+  useEffect(() => {
+    if (isOpen && activeTab === "history" && !historyLoaded) {
+      getCaseUpdates(caseId).then(data => {
+        setHistory(data)
+        setHistoryLoaded(true)
+      })
+    }
+  }, [isOpen, activeTab, caseId, historyLoaded])
 
   const handleUpdateSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
     
-    // Simular guardado
-    setTimeout(() => {
+    const isInternal = (document.getElementById("is_internal") as HTMLInputElement).checked
+    const fileName = selectedFile ? selectedFile.name : null
+
+    const result = await updateCaseStatus(caseId, status, updateText, isInternal, fileName)
+    
+    if (result.success) {
       setLoading(false)
       setIsOpen(false)
       setUpdateText("")
       setSelectedFile(null)
-      // window.location.reload() // En producción recargaríamos
-    }, 1500)
+      setHistoryLoaded(false)
+    } else {
+      alert(result.error)
+      setLoading(false)
+    }
   }
 
   const handleDelete = async () => {
     if (!confirm("¿Estás seguro de que deseas eliminar este caso? Esta acción no se puede deshacer.")) return;
     setLoading(true)
-    setTimeout(() => {
-      setLoading(false)
+    const result = await deleteCase(caseId)
+    if (result.success) {
       setIsOpen(false)
-      // window.location.reload()
-    }, 1000)
+    } else {
+      alert(result.error)
+      setLoading(false)
+    }
   }
 
   return (
@@ -165,29 +186,23 @@ export function ManageCaseDialog({ caseId, currentStatus, code }: ManageCaseDial
               {activeTab === "history" && (
                 <div className="space-y-4">
                   <h3 className="font-semibold mb-4">Historial de Actualizaciones</h3>
-                  {/* Aquí mapearíamos las actualizaciones reales. Para la UI ponemos ejemplos. */}
                   <div className="space-y-4 relative before:absolute before:inset-0 before:ml-2 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-border before:to-transparent">
-                    
-                    <div className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
-                      <div className="flex items-center justify-center w-4 h-4 rounded-full border-2 border-accent bg-background shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow" />
-                      <div className="w-[calc(100%-2rem)] md:w-[calc(50%-1.5rem)] p-4 rounded-xl border border-border/50 bg-card shadow-sm">
-                        <div className="flex justify-between items-center mb-1">
-                          <span className="text-xs font-semibold text-accent">Hace 2 días</span>
+                    {history.length > 0 ? history.map((update, idx) => (
+                      <div key={update.id} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                        <div className={`flex items-center justify-center w-4 h-4 rounded-full border-2 ${idx === 0 ? 'border-accent bg-background' : 'border-border bg-muted'} shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow`} />
+                        <div className={`w-[calc(100%-2rem)] md:w-[calc(50%-1.5rem)] p-4 rounded-xl border border-border/50 bg-card shadow-sm ${idx > 0 ? 'opacity-70' : ''}`}>
+                          <div className="flex justify-between items-center mb-1">
+                            <span className={`text-xs font-semibold ${idx === 0 ? 'text-accent' : 'text-muted-foreground'}`}>
+                              {new Date(update.created_at).toLocaleDateString("es-PE")}
+                            </span>
+                            {update.is_internal_note && <span className="text-[10px] bg-red-500/10 text-red-500 px-2 py-0.5 rounded-full">Nota Interna</span>}
+                          </div>
+                          <p className="text-sm text-foreground">{update.description}</p>
                         </div>
-                        <p className="text-sm text-foreground">Escrito de demanda presentado formalmente en mesa de partes virtual.</p>
                       </div>
-                    </div>
-                    
-                    <div className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
-                      <div className="flex items-center justify-center w-4 h-4 rounded-full border-2 border-border bg-muted shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow" />
-                      <div className="w-[calc(100%-2rem)] md:w-[calc(50%-1.5rem)] p-4 rounded-xl border border-border/50 bg-card shadow-sm opacity-70">
-                        <div className="flex justify-between items-center mb-1">
-                          <span className="text-xs font-semibold text-muted-foreground">Hace 1 semana</span>
-                        </div>
-                        <p className="text-sm text-foreground">Recepción de documentos y firma de contrato de servicios.</p>
-                      </div>
-                    </div>
-
+                    )) : (
+                      <p className="text-sm text-muted-foreground pl-8">No hay actualizaciones todavía.</p>
+                    )}
                   </div>
                 </div>
               )}

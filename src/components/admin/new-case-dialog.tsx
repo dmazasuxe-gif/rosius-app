@@ -3,23 +3,32 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Plus, X, Upload } from "lucide-react"
+import { createCase } from "@/app/actions"
 
 export function NewCaseDialog() {
   const [isOpen, setIsOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
+    setError("")
     
-    // Aquí conectaríamos con el Server Action para crear cliente y caso
-    // y subiríamos el archivo PDF inicial al bucket.
-    setTimeout(() => {
+    const formData = new FormData(e.currentTarget)
+    const fileName = selectedFile ? selectedFile.name : null
+    
+    const result = await createCase(formData, fileName)
+    
+    if (result.error) {
+      setError(result.error)
+      setLoading(false)
+    } else {
       setLoading(false)
       setIsOpen(false)
-      // window.location.reload()
-    }, 1500)
+      setSelectedFile(null)
+    }
   }
 
   return (
@@ -39,6 +48,7 @@ export function NewCaseDialog() {
             </div>
             
             <div className="p-6 overflow-y-auto">
+              {error && <div className="mb-4 p-3 bg-red-500/10 text-red-500 rounded-md text-sm border border-red-500/20">{error}</div>}
               <form id="new-case-form" onSubmit={handleSubmit} className="space-y-6">
                 
                 <div className="space-y-4">
