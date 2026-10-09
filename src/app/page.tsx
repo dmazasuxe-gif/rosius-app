@@ -46,7 +46,7 @@ export default function Home() {
           <div className="absolute inset-0 bg-secondary/5 -z-10" />
           <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-accent/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 -z-10" />
           
-          <div className="container mx-auto max-w-4xl text-center space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+          <div className="container mx-auto max-w-4xl text-center space-y-8 duration-1000">
             <h1 className="font-heading text-5xl md:text-7xl font-bold text-foreground leading-tight">
               Comprende tus derechos.<br />
               Conoce las leyes.<br />
@@ -220,7 +220,7 @@ export default function Home() {
             </div>
           </div>
           <div className="mt-12 pt-8 border-t border-white/10 text-center text-sm text-white/50">
-            &copy; {new Date().getFullYear()} ROSIUS. Todos los derechos reservados.
+            &copy; 2026 ROSIUS. Todos los derechos reservados.
           </div>
         </div>
       </footer>
