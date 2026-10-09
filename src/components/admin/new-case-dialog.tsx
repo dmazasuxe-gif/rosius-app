@@ -16,20 +16,26 @@ export function NewCaseDialog() {
     setLoading(true)
     setError("")
     
-    const formData = new FormData(e.currentTarget)
-    if (selectedFile) {
-      formData.append("file", selectedFile)
-    }
-    
-    const result = await createCase(formData)
-    
-    if (result.error) {
-      setError(result.error)
+    try {
+      const formData = new FormData(e.currentTarget)
+      if (selectedFile) {
+        formData.append("file", selectedFile)
+      }
+      
+      const result = await createCase(formData)
+      
+      if (result.error) {
+        setError(result.error)
+        setLoading(false)
+      } else {
+        setLoading(false)
+        setIsOpen(false)
+        setSelectedFile(null)
+      }
+    } catch (err: any) {
+      console.error(err)
+      setError("Ocurrió un error inesperado al crear el caso.")
       setLoading(false)
-    } else {
-      setLoading(false)
-      setIsOpen(false)
-      setSelectedFile(null)
     }
   }
 

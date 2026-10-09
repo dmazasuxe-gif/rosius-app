@@ -35,30 +35,36 @@ export function ManageCaseDialog({ caseId, currentStatus, code }: ManageCaseDial
     e.preventDefault()
     setLoading(true)
     
-    const isInternal = (document.getElementById("is_internal") as HTMLInputElement).checked
-    const isPublicDoc = (document.getElementById("is_public_doc") as HTMLInputElement)?.checked ?? true
+    try {
+      const isInternal = (document.getElementById("is_internal") as HTMLInputElement).checked
+      const isPublicDoc = (document.getElementById("is_public_doc") as HTMLInputElement)?.checked ?? true
 
-    const formData = new FormData()
-    formData.append("caseId", caseId)
-    formData.append("status", status)
-    formData.append("updateText", updateText)
-    formData.append("isInternal", isInternal.toString())
-    formData.append("isPublicDoc", isPublicDoc.toString())
-    
-    if (selectedFile) {
-      formData.append("file", selectedFile)
-    }
+      const formData = new FormData()
+      formData.append("caseId", caseId)
+      formData.append("status", status)
+      formData.append("updateText", updateText)
+      formData.append("isInternal", isInternal.toString())
+      formData.append("isPublicDoc", isPublicDoc.toString())
+      
+      if (selectedFile) {
+        formData.append("file", selectedFile)
+      }
 
-    const result = await updateCaseStatus(formData)
-    
-    if (result.success) {
-      setLoading(false)
-      setIsOpen(false)
-      setUpdateText("")
-      setSelectedFile(null)
-      setHistoryLoaded(false)
-    } else {
-      alert(result.error)
+      const result = await updateCaseStatus(formData)
+      
+      if (result.success) {
+        setLoading(false)
+        setIsOpen(false)
+        setUpdateText("")
+        setSelectedFile(null)
+        setHistoryLoaded(false)
+      } else {
+        alert(result.error)
+        setLoading(false)
+      }
+    } catch (err: any) {
+      console.error(err)
+      alert("Ocurrió un error inesperado al guardar la actualización.")
       setLoading(false)
     }
   }

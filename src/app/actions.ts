@@ -113,14 +113,25 @@ export async function createCase(formData: FormData) {
   // 3. Subir archivo si existe
   let fileName = null
   let storagePath = null
-  if (file && file.size > 0) {
-    fileName = file.name
-    const fileExt = file.name.split('.').pop()
-    const filePath = `${newCase.id}/${Date.now()}.${fileExt}`
-    const { error: uploadError } = await supabase.storage.from("documents").upload(filePath, file)
-    if (!uploadError) {
-      storagePath = filePath
+  try {
+    if (file && file.size > 0) {
+      fileName = file.name
+      const fileExt = file.name.split('.').pop()
+      const filePath = `${newCase.id}/${Date.now()}.${fileExt}`
+      
+      const buffer = await file.arrayBuffer()
+      const { error: uploadError } = await supabase.storage.from("documents").upload(filePath, buffer, {
+        contentType: file.type,
+      })
+      
+      if (!uploadError) {
+        storagePath = filePath
+      } else {
+        console.error("Storage upload error:", uploadError)
+      }
     }
+  } catch (err) {
+    console.error("Error al subir archivo:", err)
   }
 
   // 4. Crear primera actualización
@@ -166,17 +177,28 @@ export async function updateCaseStatus(formData: FormData) {
     return { error: "No se pudo actualizar el estado del caso." }
   }
 
-  // 2. Subir archivo si existe
   let fileName = null
   let storagePath = null
-  if (file && file.size > 0) {
-    fileName = file.name
-    const fileExt = file.name.split('.').pop()
-    const filePath = `${caseId}/${Date.now()}.${fileExt}`
-    const { error: uploadError } = await supabase.storage.from("documents").upload(filePath, file)
-    if (!uploadError) {
-      storagePath = filePath
+  try {
+    if (file && file.size > 0) {
+      fileName = file.name
+      const fileExt = file.name.split('.').pop()
+      const filePath = `${caseId}/${Date.now()}.${fileExt}`
+      
+      const buffer = await file.arrayBuffer()
+      const { error: uploadError } = await supabase.storage.from("documents").upload(filePath, buffer, {
+        contentType: file.type,
+      })
+      
+      if (!uploadError) {
+        storagePath = filePath
+      } else {
+        console.error("Storage upload error:", uploadError)
+      }
     }
+  } catch (err) {
+    console.error("Error al subir archivo:", err)
+    // No interrumpir, solo registrar
   }
 
   // 3. Crear actualización
