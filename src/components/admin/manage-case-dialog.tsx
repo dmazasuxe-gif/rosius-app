@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { X, Upload, Activity, History, Settings, Trash2 } from "lucide-react"
 import { updateCaseStatus, deleteCase, getCaseUpdates } from "@/app/actions"
+import { supabase } from "@/lib/supabase"
 
 type ManageCaseDialogProps = {
   caseId: string;
@@ -21,6 +22,8 @@ export function ManageCaseDialog({ caseId, currentStatus, code }: ManageCaseDial
   const [activeTab, setActiveTab] = useState<"update" | "history" | "settings">("update")
   const [history, setHistory] = useState<any[]>([])
   const [historyLoaded, setHistoryLoaded] = useState(false)
+  const [isInternal, setIsInternal] = useState(false)
+  const [isPublicDoc, setIsPublicDoc] = useState(true)
 
   useEffect(() => {
     if (isOpen && activeTab === "history" && !historyLoaded) {
@@ -36,21 +39,23 @@ export function ManageCaseDialog({ caseId, currentStatus, code }: ManageCaseDial
     setLoading(true)
     
     try {
-      const isInternal = (document.getElementById("is_internal") as HTMLInputElement).checked
-      const isPublicDoc = (document.getElementById("is_public_doc") as HTMLInputElement)?.checked ?? true
+      let fileName = null
+      let storagePath = null
 
-      const formData = new FormData()
-      formData.append("caseId", caseId)
-      formData.append("status", status)
-      formData.append("updateText", updateText)
-      formData.append("isInternal", isInternal.toString())
-      formData.append("isPublicDoc", isPublicDoc.toString())
-      
       if (selectedFile) {
-        formData.append("file", selectedFile)
+        fileName = selectedFile.name
+        const fileExt = fileName.split('.').pop()
+        const filePath = `${caseId}/${Date.now()}.${fileExt}`
+        
+        const { error: uploadError } = await supabase.storage.from("documents").upload(filePath, selectedFile)
+        if (!uploadError) {
+          storagePath = filePath
+        } else {
+          console.error("Error al subir archivo:", uploadError)
+        }
       }
 
-      const result = await updateCaseStatus(formData)
+      const result = await updateCaseStatus({ caseId, status, updateText, isInternal, isPublicDoc, fileName, storagePath })
       
       if (result.success) {
         setLoading(false)
@@ -166,8 +171,8 @@ export function ManageCaseDialog({ caseId, currentStatus, code }: ManageCaseDial
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <input type="checkbox" id="is_internal" name="is_internal" className="rounded border-input text-accent focus:ring-accent" />
-                      <label htmlFor="is_internal" className="text-sm font-medium text-foreground">Nota interna (El cliente no podrá verla)</label>
+                      <input type="checkbox" checked={isInternal} onChange={(e) => setIsInternal(e.target.checked)} className="rounded border-input text-accent focus:ring-accent" />
+                      <label onClick={() => setIsInternal(!isInternal)} className="text-sm font-medium text-foreground cursor-pointer">Nota interna (El cliente no podrá verla)</label>
                     </div>
                   </div>
 
@@ -193,8 +198,8 @@ export function ManageCaseDialog({ caseId, currentStatus, code }: ManageCaseDial
                     </div>
                     
                     <div className="flex items-center gap-2 pt-2">
-                      <input type="checkbox" id="is_public_doc" name="is_public_doc" defaultChecked className="rounded border-input text-accent focus:ring-accent" />
-                      <label htmlFor="is_public_doc" className="text-sm font-medium text-foreground">Permitir que el cliente descargue este documento</label>
+                      <input type="checkbox" checked={isPublicDoc} onChange={(e) => setIsPublicDoc(e.target.checked)} className="rounded border-input text-accent focus:ring-accent" />
+                      <label onClick={() => setIsPublicDoc(!isPublicDoc)} className="text-sm font-medium text-foreground cursor-pointer">Permitir que el cliente descargue este documento</label>
                     </div>
                   </div>
                 </form>

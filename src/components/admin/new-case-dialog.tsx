@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Plus, X, Upload } from "lucide-react"
 import { createCase } from "@/app/actions"
+import { supabase } from "@/lib/supabase"
 
 export function NewCaseDialog() {
   const [isOpen, setIsOpen] = useState(false)
@@ -18,11 +19,29 @@ export function NewCaseDialog() {
     
     try {
       const formData = new FormData(e.currentTarget)
+      const dni = formData.get("dni") as string
+      const phone = formData.get("phone") as string
+      const full_name = formData.get("full_name") as string
+      const email = formData.get("email") as string
+      const code = formData.get("code") as string
+      const subject_type = formData.get("subject_type") as string
+
+      let fileName = null
+      let storagePath = null
+
       if (selectedFile) {
-        formData.append("file", selectedFile)
+        fileName = selectedFile.name
+        const fileExt = fileName.split('.').pop()
+        const filePath = `new/${Date.now()}.${fileExt}`
+        const { error: uploadError } = await supabase.storage.from("documents").upload(filePath, selectedFile)
+        if (!uploadError) {
+          storagePath = filePath
+        } else {
+          console.error("Error al subir archivo:", uploadError)
+        }
       }
       
-      const result = await createCase(formData)
+      const result = await createCase({ dni, phone, full_name, email, code, subject_type, fileName, storagePath })
       
       if (result.error) {
         setError(result.error)

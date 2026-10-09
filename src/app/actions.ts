@@ -65,15 +65,7 @@ export async function getCaseUpdates(caseId: string) {
   return updates
 }
 
-export async function createCase(formData: FormData) {
-  const dni = formData.get("dni") as string
-  const phone = formData.get("phone") as string
-  const full_name = formData.get("full_name") as string
-  const email = formData.get("email") as string
-  const code = formData.get("code") as string
-  const subject_type = formData.get("subject_type") as string
-  const file = formData.get("file") as File | null
-
+export async function createCase({ dni, phone, full_name, email, code, subject_type, fileName, storagePath }: any) {
   // 1. Buscar o crear cliente
   let { data: client, error: clientError } = await supabase
     .from("clients")
@@ -110,31 +102,7 @@ export async function createCase(formData: FormData) {
     return { error: "Error al crear el caso (¿El código ya existe?)" }
   }
 
-  // 3. Subir archivo si existe
-  let fileName = null
-  let storagePath = null
-  try {
-    if (file && file.size > 0) {
-      fileName = file.name
-      const fileExt = file.name.split('.').pop()
-      const filePath = `${newCase.id}/${Date.now()}.${fileExt}`
-      
-      const buffer = await file.arrayBuffer()
-      const { error: uploadError } = await supabase.storage.from("documents").upload(filePath, buffer, {
-        contentType: file.type,
-      })
-      
-      if (!uploadError) {
-        storagePath = filePath
-      } else {
-        console.error("Storage upload error:", uploadError)
-      }
-    }
-  } catch (err) {
-    console.error("Error al subir archivo:", err)
-  }
-
-  // 4. Crear primera actualización
+  // 3. Crear primera actualización
   const updateDesc = fileName 
     ? `Expediente inicial registrado. [Documento adjunto: ${fileName}]`
     : `Expediente inicial registrado.`
@@ -159,14 +127,7 @@ export async function createCase(formData: FormData) {
   return { success: true }
 }
 
-export async function updateCaseStatus(formData: FormData) {
-  const caseId = formData.get("caseId") as string
-  const status = formData.get("status") as string
-  const updateText = formData.get("updateText") as string
-  const isInternal = formData.get("isInternal") === "true"
-  const isPublicDoc = formData.get("isPublicDoc") !== "false"
-  const file = formData.get("file") as File | null
-
+export async function updateCaseStatus({ caseId, status, updateText, isInternal, isPublicDoc, fileName, storagePath }: any) {
   // 1. Actualizar estado del caso
   const { error: updateError } = await supabase
     .from("cases")
@@ -177,31 +138,7 @@ export async function updateCaseStatus(formData: FormData) {
     return { error: "No se pudo actualizar el estado del caso." }
   }
 
-  let fileName = null
-  let storagePath = null
-  try {
-    if (file && file.size > 0) {
-      fileName = file.name
-      const fileExt = file.name.split('.').pop()
-      const filePath = `${caseId}/${Date.now()}.${fileExt}`
-      
-      const buffer = await file.arrayBuffer()
-      const { error: uploadError } = await supabase.storage.from("documents").upload(filePath, buffer, {
-        contentType: file.type,
-      })
-      
-      if (!uploadError) {
-        storagePath = filePath
-      } else {
-        console.error("Storage upload error:", uploadError)
-      }
-    }
-  } catch (err) {
-    console.error("Error al subir archivo:", err)
-    // No interrumpir, solo registrar
-  }
-
-  // 3. Crear actualización
+  // 2. Crear actualización
   const desc = fileName 
     ? `${updateText} [Documento adjunto: ${fileName}]` 
     : updateText
