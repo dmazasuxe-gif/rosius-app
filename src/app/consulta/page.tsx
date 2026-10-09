@@ -1,16 +1,48 @@
-import { Button } from "@/components/ui/button";
-import { ShieldCheck } from "lucide-react";
-import Link from "next/link";
+"use client"
 
-export const metadata = {
-  title: "Consulta tu caso | ROSIUS",
-  description: "Consulta de manera segura el estado de tu expediente jurídico.",
-};
+import { Button } from "@/components/ui/button";
+import { ShieldCheck, Loader2 } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import { lookupDni } from "../actions";
+import { useRouter } from "next/navigation";
 
 export default function ConsultaPage() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [step, setStep] = useState(1);
+  const [clientId, setClientId] = useState("");
+  const router = useRouter();
+
+  async function handleDniSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    const formData = new FormData(e.currentTarget);
+    const result = await lookupDni(formData);
+
+    if (result.error) {
+      setError(result.error);
+    } else if (result.success) {
+      setClientId(result.clientId!);
+      setStep(2); // Pasar al paso de OTP
+    }
+    
+    setLoading(false);
+  }
+
+  function handleOtpSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setLoading(true);
+    // Simulamos validación de OTP exitosa
+    setTimeout(() => {
+      router.push(`/consulta/${clientId}`);
+    }, 1000);
+  }
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Header Minimalista */}
       <header className="w-full border-b border-border/50 bg-background/80 backdrop-blur-md">
         <div className="container mx-auto px-4 h-20 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
@@ -28,7 +60,6 @@ export default function ConsultaPage() {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-md bg-card border border-border/50 rounded-2xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-500">
           <div className="bg-secondary p-8 text-center text-white">
@@ -42,31 +73,55 @@ export default function ConsultaPage() {
           </div>
 
           <div className="p-8">
-            <form className="space-y-6">
-              <div className="space-y-2">
-                <label htmlFor="dni" className="text-sm font-medium text-foreground">
-                  Documento Nacional de Identidad (DNI)
-                </label>
-                <input 
-                  id="dni" 
-                  name="dni" 
-                  type="text" 
-                  maxLength={8}
-                  placeholder="Ej: 12345678"
-                  className="w-full h-12 px-4 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-accent transition-all"
-                  required
-                />
-              </div>
+            {step === 1 ? (
+              <form onSubmit={handleDniSubmit} className="space-y-6">
+                <div className="space-y-2">
+                  <label htmlFor="dni" className="text-sm font-medium text-foreground">
+                    Documento Nacional de Identidad (DNI)
+                  </label>
+                  <input 
+                    id="dni" 
+                    name="dni" 
+                    type="text" 
+                    maxLength={8}
+                    placeholder="Ej: 12345678"
+                    className="w-full h-12 px-4 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-accent transition-all"
+                    required
+                  />
+                </div>
+                
+                {error && <p className="text-red-500 text-sm">{error}</p>}
 
-              <div className="space-y-4">
-                <Button type="button" className="w-full h-12 bg-primary hover:bg-primary/90 text-white text-base shadow-md">
-                  Solicitar código de acceso
+                <div className="space-y-4">
+                  <Button type="submit" disabled={loading} className="w-full h-12 bg-primary hover:bg-primary/90 text-white text-base shadow-md">
+                    {loading ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : "Solicitar código de acceso"}
+                  </Button>
+                  <p className="text-xs text-center text-muted-foreground leading-relaxed">
+                    Por seguridad, enviaremos un código temporal al correo electrónico o teléfono asociado a este DNI.
+                  </p>
+                </div>
+              </form>
+            ) : (
+              <form onSubmit={handleOtpSubmit} className="space-y-6 animate-in fade-in slide-in-from-right-8">
+                <div className="space-y-2 text-center mb-6">
+                  <p className="text-sm font-medium text-foreground">
+                    Hemos enviado un código de 6 dígitos a tus medios de contacto registrados.
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <input 
+                    type="text" 
+                    maxLength={6}
+                    placeholder="123456"
+                    className="w-full h-12 px-4 rounded-lg border border-input bg-background text-center text-2xl tracking-[0.5em] focus:outline-none focus:ring-2 focus:ring-accent transition-all"
+                    required
+                  />
+                </div>
+                <Button type="submit" disabled={loading} className="w-full h-12 bg-accent hover:bg-accent/90 text-white text-base shadow-md">
+                  {loading ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : "Verificar e Ingresar"}
                 </Button>
-                <p className="text-xs text-center text-muted-foreground leading-relaxed">
-                  Por seguridad, enviaremos un código temporal al correo electrónico o teléfono asociado a este DNI.
-                </p>
-              </div>
-            </form>
+              </form>
+            )}
           </div>
         </div>
       </main>

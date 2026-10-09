@@ -177,12 +177,16 @@ export default function Home() {
               Recuerda que este primer contacto no genera automáticamente una relación abogado-cliente.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
-              <Button size="lg" className="h-14 px-8 text-base bg-secondary hover:bg-secondary/90 text-white">
-                Contactar por WhatsApp
-              </Button>
-              <Button size="lg" variant="outline" className="h-14 px-8 text-base">
-                Formulario de Contacto
-              </Button>
+              <a href="https://wa.me/51999999999" target="_blank" rel="noopener noreferrer">
+                <Button size="lg" className="w-full sm:w-auto h-14 px-8 text-base bg-secondary hover:bg-secondary/90 text-white">
+                  Contactar por WhatsApp
+                </Button>
+              </a>
+              <Link href="/consulta">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto h-14 px-8 text-base">
+                  Consulta de Expediente
+                </Button>
+              </Link>
             </div>
           </div>
         </section>
@@ -204,17 +208,17 @@ export default function Home() {
             <div>
               <h4 className="font-heading text-sm font-semibold mb-2 text-accent">Enlaces Rápidos</h4>
               <ul className="space-y-1 text-xs text-white/70">
-                <li><Link href="/leyes" className="hover:text-accent transition-colors">Leyes y normas</Link></li>
+                <li><Link href="/" className="hover:text-accent transition-colors">Leyes y normas (Pronto)</Link></li>
                 <li><Link href="/consulta" className="hover:text-accent transition-colors">Consulta tu caso</Link></li>
-                <li><Link href="/actualidad" className="hover:text-accent transition-colors">Actualidad jurídica</Link></li>
+                <li><Link href="/" className="hover:text-accent transition-colors">Actualidad jurídica (Pronto)</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="font-heading text-sm font-semibold mb-2 text-accent">Legal</h4>
               <ul className="space-y-1 text-xs text-white/70">
-                <li><Link href="/privacidad" className="hover:text-accent transition-colors">Privacidad</Link></li>
-                <li><Link href="/terminos" className="hover:text-accent transition-colors">Términos</Link></li>
-                <li><Link href="/contacto" className="hover:text-accent transition-colors">Contacto</Link></li>
+                <li><Link href="/" className="hover:text-accent transition-colors">Privacidad</Link></li>
+                <li><Link href="/" className="hover:text-accent transition-colors">Términos</Link></li>
+                <li><a href="https://wa.me/51999999999" className="hover:text-accent transition-colors">Contacto</a></li>
               </ul>
             </div>
           </div>

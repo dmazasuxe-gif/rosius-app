@@ -2,7 +2,15 @@ export const metadata = {
   title: "Dashboard | ROSIUS Admin",
 };
 
-export default function AdminDashboard() {
+import { supabase } from "@/lib/supabase";
+
+export const instant = false;
+
+export default async function AdminDashboard() {
+  const { count: activeCases } = await supabase.from("cases").select("*", { count: "exact", head: true }).eq("status", "En Proceso");
+  const { count: resolvedCases } = await supabase.from("cases").select("*", { count: "exact", head: true }).eq("status", "Resuelto");
+  const { count: totalClients } = await supabase.from("clients").select("*", { count: "exact", head: true });
+
   return (
     <div className="space-y-8 animate-in fade-in zoom-in-95 duration-500">
       <div>
@@ -13,15 +21,15 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-card border border-border/50 p-6 rounded-2xl shadow-sm">
           <h3 className="text-sm font-medium text-muted-foreground">Casos Activos</h3>
-          <p className="text-3xl font-heading font-bold mt-2">12</p>
+          <p className="text-3xl font-heading font-bold mt-2">{activeCases || 0}</p>
         </div>
         <div className="bg-card border border-border/50 p-6 rounded-2xl shadow-sm">
           <h3 className="text-sm font-medium text-muted-foreground">Casos Resueltos</h3>
-          <p className="text-3xl font-heading font-bold mt-2">48</p>
+          <p className="text-3xl font-heading font-bold mt-2">{resolvedCases || 0}</p>
         </div>
         <div className="bg-card border border-border/50 p-6 rounded-2xl shadow-sm">
-          <h3 className="text-sm font-medium text-muted-foreground">Nuevas Consultas</h3>
-          <p className="text-3xl font-heading font-bold mt-2 text-accent">3</p>
+          <h3 className="text-sm font-medium text-muted-foreground">Total Clientes</h3>
+          <p className="text-3xl font-heading font-bold mt-2 text-accent">{totalClients || 0}</p>
         </div>
       </div>
       

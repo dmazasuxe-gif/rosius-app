@@ -5,7 +5,13 @@ export const metadata = {
   title: "Gestión de Casos | ROSIUS Admin",
 };
 
-export default function AdminCasos() {
+import { getAllCases } from "@/app/actions";
+
+export const instant = false;
+
+export default async function AdminCasos() {
+  const cases = await getAllCases() || [];
+
   return (
     <div className="space-y-6 animate-in fade-in zoom-in-95 duration-500">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -42,24 +48,34 @@ export default function AdminCasos() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border/50">
-              <tr className="hover:bg-muted/20 transition-colors">
-                <td className="px-6 py-4 font-medium text-primary">EXP-2026-001</td>
-                <td className="px-6 py-4">
-                  <p className="font-medium text-foreground">Juan Pérez</p>
-                  <p className="text-xs text-muted-foreground">74581236</p>
-                </td>
-                <td className="px-6 py-4">
-                  <span className="px-2 py-1 bg-yellow-500/10 text-yellow-600 border border-yellow-500/20 rounded-full text-xs font-medium">
-                    En Proceso
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-muted-foreground">Hace 2 días</td>
-                <td className="px-6 py-4 text-right">
-                  <Button variant="outline" size="sm" className="text-xs">
-                    Administrar
-                  </Button>
-                </td>
-              </tr>
+              {cases.length > 0 ? cases.map((c: any) => (
+                <tr key={c.id} className="hover:bg-muted/20 transition-colors">
+                  <td className="px-6 py-4 font-medium text-primary">{c.code}</td>
+                  <td className="px-6 py-4">
+                    <p className="font-medium text-foreground">{c.clients?.full_name || 'Desconocido'}</p>
+                    <p className="text-xs text-muted-foreground">{c.clients?.dni || 'N/A'}</p>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className="px-2 py-1 bg-yellow-500/10 text-yellow-600 border border-yellow-500/20 rounded-full text-xs font-medium">
+                      {c.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-muted-foreground">
+                    {new Date(c.updated_at).toLocaleDateString("es-PE")}
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <Button variant="outline" size="sm" className="text-xs">
+                      Administrar
+                    </Button>
+                  </td>
+                </tr>
+              )) : (
+                <tr>
+                  <td colSpan={5} className="px-6 py-8 text-center text-muted-foreground">
+                    No hay expedientes registrados.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
