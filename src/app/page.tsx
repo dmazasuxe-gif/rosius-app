@@ -33,9 +33,9 @@ export default function Home() {
             <Button variant="outline" className="hidden md:inline-flex border-accent text-accent-foreground hover:bg-accent/10">
               ROSIUS IA
             </Button>
-            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
+            <Link href="/consulta" className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2">
               Consultar mi caso
-            </Button>
+            </Link>
           </div>
         </div>
       </header>
@@ -59,10 +59,10 @@ export default function Home() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
-              <Button size="lg" className="w-full sm:w-auto h-14 px-8 text-base shadow-xl shadow-primary/20 bg-primary hover:bg-primary/90">
+              <Link href="/consulta" className="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium transition-colors shadow-xl shadow-primary/20 bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto h-14 px-8 text-base">
                 <Search className="mr-2 h-5 w-5" />
                 Consultar el estado de mi caso
-              </Button>
+              </Link>
               <Button size="lg" variant="outline" className="w-full sm:w-auto h-14 px-8 text-base border-accent text-accent hover:bg-accent hover:text-white">
                 Explorar información jurídica
               </Button>
