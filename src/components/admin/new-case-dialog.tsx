@@ -7,6 +7,7 @@ import { Plus, X, Upload } from "lucide-react"
 export function NewCaseDialog() {
   const [isOpen, setIsOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -78,11 +79,19 @@ export function NewCaseDialog() {
                   <div className="space-y-2 pt-2">
                     <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Expediente PDF (Opcional)</label>
                     <div className="border-2 border-dashed border-input rounded-xl p-6 text-center hover:bg-muted/30 transition-colors">
-                      <input type="file" id="file-upload" accept=".pdf" className="hidden" />
+                      <input 
+                        type="file" 
+                        id="file-upload" 
+                        accept=".pdf" 
+                        className="hidden" 
+                        onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                      />
                       <label htmlFor="file-upload" className="cursor-pointer flex flex-col items-center">
-                        <Upload className="w-8 h-8 text-muted-foreground mb-2" />
-                        <span className="text-sm font-medium text-foreground">Haz clic para subir un PDF</span>
-                        <span className="text-xs text-muted-foreground mt-1">Máx. 10MB</span>
+                        <Upload className={`w-8 h-8 mb-2 ${selectedFile ? 'text-accent' : 'text-muted-foreground'}`} />
+                        <span className="text-sm font-medium text-foreground">
+                          {selectedFile ? selectedFile.name : "Haz clic para subir un PDF"}
+                        </span>
+                        {!selectedFile && <span className="text-xs text-muted-foreground mt-1">Máx. 10MB</span>}
                       </label>
                     </div>
                   </div>

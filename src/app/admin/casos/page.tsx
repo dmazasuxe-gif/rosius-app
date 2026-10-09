@@ -76,7 +76,7 @@ export default async function AdminCasos() {
                     {new Date(item.updated_at).toLocaleDateString("es-PE")}
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <ManageCaseDialog caseId={item.id} />
+                    <ManageCaseDialog caseId={item.id} currentStatus={item.status} code={item.code} />
                   </td>
                 </tr>
               )}) : (

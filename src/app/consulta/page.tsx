@@ -1,44 +1,32 @@
 "use client"
 
 import { Button } from "@/components/ui/button";
-import { ShieldCheck, Loader2 } from "lucide-react";
+import { ShieldCheck, Loader2, FileText, User } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { lookupDni } from "../actions";
+import { lookupCase } from "../actions";
 import { useRouter } from "next/navigation";
 
 export default function ConsultaPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [step, setStep] = useState(1);
-  const [clientId, setClientId] = useState("");
   const router = useRouter();
 
-  async function handleDniSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleCaseSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
     setError("");
 
     const formData = new FormData(e.currentTarget);
-    const result = await lookupDni(formData);
+    const result = await lookupCase(formData);
 
     if (result.error) {
       setError(result.error);
     } else if (result.success) {
-      setClientId(result.clientId!);
-      setStep(2); // Pasar al paso de OTP
+      router.push(`/consulta/${result.clientId}`);
     }
     
     setLoading(false);
-  }
-
-  function handleOtpSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setLoading(true);
-    // Simulamos validación de OTP exitosa
-    setTimeout(() => {
-      router.push(`/consulta/${clientId}`);
-    }, 1000);
   }
 
   return (
@@ -62,66 +50,75 @@ export default function ConsultaPage() {
 
       <main className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-md bg-card border border-border/50 rounded-2xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-500">
-          <div className="bg-secondary p-8 text-center text-white">
-            <div className="mx-auto bg-white/10 w-16 h-16 rounded-full flex items-center justify-center mb-4">
+          <div className="bg-gradient-to-br from-secondary to-secondary/90 p-8 text-center text-white relative overflow-hidden">
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+            <div className="mx-auto bg-accent/20 border border-accent/50 w-16 h-16 rounded-full flex items-center justify-center mb-4 relative z-10 backdrop-blur-sm">
               <ShieldCheck className="w-8 h-8 text-accent" />
             </div>
-            <h1 className="font-heading text-2xl font-bold">Estado de tu Caso</h1>
-            <p className="text-secondary-foreground/80 mt-2 text-sm">
-              Acceso seguro y confidencial a tu expediente.
+            <h1 className="font-heading text-2xl font-bold relative z-10">Estado de tu Caso</h1>
+            <p className="text-white/80 mt-2 text-sm relative z-10">
+              Acceso seguro, directo y confidencial a tu expediente legal.
             </p>
           </div>
 
           <div className="p-8">
-            {step === 1 ? (
-              <form onSubmit={handleDniSubmit} className="space-y-6">
+            <form onSubmit={handleCaseSubmit} className="space-y-6">
+              <div className="space-y-4">
                 <div className="space-y-2">
                   <label htmlFor="dni" className="text-sm font-medium text-foreground">
                     Documento Nacional de Identidad (DNI)
                   </label>
-                  <input 
-                    id="dni" 
-                    name="dni" 
-                    type="text" 
-                    maxLength={8}
-                    placeholder="Ej: 12345678"
-                    className="w-full h-12 px-4 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-accent transition-all text-foreground"
-                    required
-                  />
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <User className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                    <input 
+                      id="dni" 
+                      name="dni" 
+                      type="text" 
+                      maxLength={8}
+                      placeholder="Ingresa los 8 dígitos"
+                      className="w-full h-12 pl-10 pr-4 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-accent transition-all text-foreground"
+                      required
+                    />
+                  </div>
                 </div>
-                
-                {error && <p className="text-red-500 text-sm">{error}</p>}
 
-                <div className="space-y-4">
-                  <Button type="submit" disabled={loading} className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground text-base shadow-md">
-                    {loading ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : "Solicitar código de acceso"}
-                  </Button>
-                  <p className="text-xs text-center text-muted-foreground leading-relaxed">
-                    Por seguridad, enviaremos un código temporal al correo electrónico o teléfono asociado a este DNI.
-                  </p>
-                </div>
-              </form>
-            ) : (
-              <form onSubmit={handleOtpSubmit} className="space-y-6 animate-in fade-in slide-in-from-right-8">
-                <div className="space-y-2 text-center mb-6">
-                  <p className="text-sm font-medium text-foreground">
-                    Hemos enviado un código de 6 dígitos a tus medios de contacto registrados.
-                  </p>
-                </div>
                 <div className="space-y-2">
-                  <input 
-                    type="text" 
-                    maxLength={6}
-                    placeholder="123456"
-                    className="w-full h-12 px-4 rounded-lg border border-input bg-background text-center text-2xl tracking-[0.5em] focus:outline-none focus:ring-2 focus:ring-accent transition-all text-foreground"
-                    required
-                  />
+                  <label htmlFor="code" className="text-sm font-medium text-foreground">
+                    Código de Expediente
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <FileText className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                    <input 
+                      id="code" 
+                      name="code" 
+                      type="text" 
+                      placeholder="Ej: EXP-2026-001"
+                      className="w-full h-12 pl-10 pr-4 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-accent transition-all text-foreground"
+                      required
+                    />
+                  </div>
                 </div>
-                <Button type="submit" disabled={loading} className="w-full h-12 bg-accent hover:bg-accent/90 text-accent-foreground text-base shadow-md">
-                  {loading ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : "Verificar e Ingresar"}
+              </div>
+              
+              {error && (
+                <div className="bg-red-500/10 border border-red-500/20 rounded-md p-3">
+                  <p className="text-red-500 text-sm text-center font-medium">{error}</p>
+                </div>
+              )}
+
+              <div className="space-y-4 pt-2">
+                <Button type="submit" disabled={loading} className="w-full h-12 bg-accent hover:bg-accent/90 text-accent-foreground text-base shadow-md font-medium transition-all">
+                  {loading ? <Loader2 className="animate-spin mr-2 h-5 w-5" /> : "Verificar e Ingresar"}
                 </Button>
-              </form>
-            )}
+                <p className="text-xs text-center text-muted-foreground leading-relaxed">
+                  Toda la información contenida está protegida bajo el secreto profesional abogado-cliente.
+                </p>
+              </div>
+            </form>
           </div>
         </div>
       </main>

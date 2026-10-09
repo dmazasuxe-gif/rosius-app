@@ -9,24 +9,41 @@ export async function submitContact(formData: FormData) {
   return { success: true }
 }
 
-export async function lookupDni(formData: FormData) {
+export async function lookupCase(formData: FormData) {
   const dni = formData.get("dni") as string
+  const code = formData.get("code") as string
   
   if (!dni || dni.length !== 8) {
     return { error: "El DNI debe tener 8 dígitos." }
   }
+  
+  if (!code) {
+    return { error: "El número de expediente es requerido." }
+  }
 
-  const { data: client, error } = await supabase
+  // Buscar cliente por DNI
+  const { data: client, error: clientError } = await supabase
     .from("clients")
     .select("id")
     .eq("dni", dni)
     .single()
 
-  if (error || !client) {
-    return { error: "No se encontraron expedientes asociados a este DNI." }
+  if (clientError || !client) {
+    return { error: "No se encontró el DNI." }
   }
 
-  // En un entorno real, enviaríamos un OTP. Aquí simulamos éxito
+  // Validar si ese cliente tiene el expediente indicado
+  const { data: caseData, error: caseError } = await supabase
+    .from("cases")
+    .select("id")
+    .eq("client_id", client.id)
+    .eq("code", code)
+    .single()
+
+  if (caseError || !caseData) {
+    return { error: "El expediente no coincide con el DNI ingresado." }
+  }
+
   return { success: true, clientId: client.id }
 }
 
