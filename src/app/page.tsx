@@ -189,37 +189,36 @@ export default function Home() {
       </main>
 
       {/* FOOTER */}
-      <footer className="bg-secondary text-secondary-foreground py-12 border-t border-white/10">
+      <footer className="bg-secondary text-secondary-foreground py-8 border-t border-white/10">
         <div className="container mx-auto px-4 max-w-6xl">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="md:col-span-2 space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="md:col-span-2 space-y-2">
               <div className="flex flex-col">
-                <span className="font-heading text-2xl font-bold tracking-widest text-accent">ROSIUS</span>
-                <span className="text-[10px] uppercase tracking-widest text-white/50">La ley, a tu alcance</span>
+                <span className="font-heading text-xl font-bold tracking-widest text-accent">ROSIUS</span>
+                <span className="text-[9px] uppercase tracking-widest text-white/50">La ley, a tu alcance</span>
               </div>
-              <p className="text-white/70 max-w-sm text-sm">
+              <p className="text-white/70 max-w-sm text-xs">
                 Plataforma jurídica personal dedicada a la difusión de información legal y orientación jurídica en el Perú.
               </p>
             </div>
             <div>
-              <h4 className="font-heading font-semibold mb-4 text-accent">Enlaces Rápidos</h4>
-              <ul className="space-y-2 text-sm text-white/70">
+              <h4 className="font-heading text-sm font-semibold mb-2 text-accent">Enlaces Rápidos</h4>
+              <ul className="space-y-1 text-xs text-white/70">
                 <li><Link href="/leyes" className="hover:text-accent transition-colors">Leyes y normas</Link></li>
                 <li><Link href="/consulta" className="hover:text-accent transition-colors">Consulta tu caso</Link></li>
                 <li><Link href="/actualidad" className="hover:text-accent transition-colors">Actualidad jurídica</Link></li>
-                <li><Link href="/contacto" className="hover:text-accent transition-colors">Contacto</Link></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-heading font-semibold mb-4 text-accent">Legal</h4>
-              <ul className="space-y-2 text-sm text-white/70">
-                <li><Link href="/privacidad" className="hover:text-accent transition-colors">Política de Privacidad</Link></li>
-                <li><Link href="/terminos" className="hover:text-accent transition-colors">Términos de Uso</Link></li>
-                <li><Link href="/cookies" className="hover:text-accent transition-colors">Política de Cookies</Link></li>
+              <h4 className="font-heading text-sm font-semibold mb-2 text-accent">Legal</h4>
+              <ul className="space-y-1 text-xs text-white/70">
+                <li><Link href="/privacidad" className="hover:text-accent transition-colors">Privacidad</Link></li>
+                <li><Link href="/terminos" className="hover:text-accent transition-colors">Términos</Link></li>
+                <li><Link href="/contacto" className="hover:text-accent transition-colors">Contacto</Link></li>
               </ul>
             </div>
           </div>
-          <div className="mt-12 pt-8 border-t border-white/10 text-center text-sm text-white/50">
+          <div className="mt-8 pt-4 border-t border-white/10 text-center text-xs text-white/50">
             &copy; 2026 ROSIUS. Todos los derechos reservados.
           </div>
         </div>
