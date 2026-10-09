@@ -36,9 +36,20 @@ export function ManageCaseDialog({ caseId, currentStatus, code }: ManageCaseDial
     setLoading(true)
     
     const isInternal = (document.getElementById("is_internal") as HTMLInputElement).checked
-    const fileName = selectedFile ? selectedFile.name : null
+    const isPublicDoc = (document.getElementById("is_public_doc") as HTMLInputElement)?.checked ?? true
 
-    const result = await updateCaseStatus(caseId, status, updateText, isInternal, fileName)
+    const formData = new FormData()
+    formData.append("caseId", caseId)
+    formData.append("status", status)
+    formData.append("updateText", updateText)
+    formData.append("isInternal", isInternal.toString())
+    formData.append("isPublicDoc", isPublicDoc.toString())
+    
+    if (selectedFile) {
+      formData.append("file", selectedFile)
+    }
+
+    const result = await updateCaseStatus(formData)
     
     if (result.success) {
       setLoading(false)

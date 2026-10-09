@@ -17,9 +17,11 @@ export function NewCaseDialog() {
     setError("")
     
     const formData = new FormData(e.currentTarget)
-    const fileName = selectedFile ? selectedFile.name : null
+    if (selectedFile) {
+      formData.append("file", selectedFile)
+    }
     
-    const result = await createCase(formData, fileName)
+    const result = await createCase(formData)
     
     if (result.error) {
       setError(result.error)
