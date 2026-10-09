@@ -85,7 +85,7 @@ export default function ConsultaPage() {
                     type="text" 
                     maxLength={8}
                     placeholder="Ej: 12345678"
-                    className="w-full h-12 px-4 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-accent transition-all"
+                    className="w-full h-12 px-4 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-accent transition-all text-foreground"
                     required
                   />
                 </div>
@@ -113,7 +113,7 @@ export default function ConsultaPage() {
                     type="text" 
                     maxLength={6}
                     placeholder="123456"
-                    className="w-full h-12 px-4 rounded-lg border border-input bg-background text-center text-2xl tracking-[0.5em] focus:outline-none focus:ring-2 focus:ring-accent transition-all"
+                    className="w-full h-12 px-4 rounded-lg border border-input bg-background text-center text-2xl tracking-[0.5em] focus:outline-none focus:ring-2 focus:ring-accent transition-all text-foreground"
                     required
                   />
                 </div>

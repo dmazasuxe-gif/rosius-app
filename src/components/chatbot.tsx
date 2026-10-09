@@ -122,7 +122,7 @@ export default function Chatbot() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Escribe tu consulta legal..."
-              className="w-full h-12 pl-4 pr-12 rounded-full border border-input bg-muted/50 focus:outline-none focus:ring-2 focus:ring-accent transition-all text-sm"
+              className="w-full h-12 pl-4 pr-12 rounded-full border border-input bg-muted/50 focus:outline-none focus:ring-2 focus:ring-accent transition-all text-sm text-foreground"
             />
             <Button 
               type="submit" 
