@@ -1,9 +1,5 @@
-import OpenAI from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || "dummy",
-});
 
 export const maxDuration = 30;
 
@@ -11,14 +7,17 @@ export async function POST(req: Request) {
   try {
     const { messages } = await req.json();
 
-    if (!process.env.OPENAI_API_KEY) {
+    if (!process.env.GEMINI_API_KEY) {
       return NextResponse.json({
         role: "assistant",
-        content: "Para usar el asistente, el administrador debe configurar la variable de entorno OPENAI_API_KEY en Vercel."
+        content: "Para usar el asistente, el administrador debe configurar la variable de entorno GEMINI_API_KEY en Vercel."
       });
     }
 
-    const systemPrompt = `
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+
+    const systemInstruction = `
 Eres "ROSIUS IA", el asistente jurídico virtual de la abogada Rosita Ysela Maza Suxe y su plataforma ROSIUS en Perú.
 Tu objetivo es orientar a las personas sobre sus derechos, leyes peruanas, procedimientos civiles, penales y laborales.
 REGLAS ESTRICTAS:
@@ -30,12 +29,28 @@ REGLAS ESTRICTAS:
 6. Termina tus respuestas ofreciendo que contacten a la firma mediante el formulario web.
     `;
 
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [{ role: "system", content: systemPrompt }, ...messages],
+    // Extraer el último mensaje del usuario para enviarlo a Gemini
+    const lastMessage = messages[messages.length - 1].content;
+    
+    // Preparar el historial (opcional, pero ayuda a Gemini a tener contexto)
+    const history = messages.slice(0, -1).map((m: any) => ({
+      role: m.role === "assistant" ? "model" : "user",
+      parts: [{ text: m.content }],
+    }));
+
+    const chat = model.startChat({
+      history: [
+        { role: "user", parts: [{ text: "SYSTEM PROMPT INICIAL: " + systemInstruction }] },
+        { role: "model", parts: [{ text: "Entendido. Soy ROSIUS IA, seguiré estrictamente todas las reglas." }] },
+        ...history
+      ],
     });
 
-    return NextResponse.json(response.choices[0].message);
+    const result = await chat.sendMessage(lastMessage);
+    const response = await result.response;
+    const text = response.text();
+
+    return NextResponse.json({ role: "assistant", content: text });
   } catch (error) {
     console.error("Chat API Error:", error);
     return NextResponse.json(
