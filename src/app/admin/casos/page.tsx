@@ -9,6 +9,17 @@ import { getAllCases } from "@/app/actions";
 
 export const instant = false;
 
+type CaseItem = {
+  id: string;
+  code: string;
+  status: string;
+  updated_at: string;
+  clients?: {
+    full_name: string;
+    dni: string;
+  } | null;
+}
+
 export default async function AdminCasos() {
   const cases = await getAllCases() || [];
 
@@ -48,20 +59,22 @@ export default async function AdminCasos() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border/50">
-              {cases.length > 0 ? cases.map((c: any) => (
-                <tr key={c.id} className="hover:bg-muted/20 transition-colors">
-                  <td className="px-6 py-4 font-medium text-primary">{c.code}</td>
+              {cases.length > 0 ? cases.map((c: unknown) => {
+                const item = c as CaseItem;
+                return (
+                <tr key={item.id} className="hover:bg-muted/20 transition-colors">
+                  <td className="px-6 py-4 font-medium text-primary">{item.code}</td>
                   <td className="px-6 py-4">
-                    <p className="font-medium text-foreground">{c.clients?.full_name || 'Desconocido'}</p>
-                    <p className="text-xs text-muted-foreground">{c.clients?.dni || 'N/A'}</p>
+                    <p className="font-medium text-foreground">{item.clients?.full_name || 'Desconocido'}</p>
+                    <p className="text-xs text-muted-foreground">{item.clients?.dni || 'N/A'}</p>
                   </td>
                   <td className="px-6 py-4">
                     <span className="px-2 py-1 bg-yellow-500/10 text-yellow-600 border border-yellow-500/20 rounded-full text-xs font-medium">
-                      {c.status}
+                      {item.status}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-muted-foreground">
-                    {new Date(c.updated_at).toLocaleDateString("es-PE")}
+                    {new Date(item.updated_at).toLocaleDateString("es-PE")}
                   </td>
                   <td className="px-6 py-4 text-right">
                     <Button variant="outline" size="sm" className="text-xs">
@@ -69,7 +82,7 @@ export default async function AdminCasos() {
                     </Button>
                   </td>
                 </tr>
-              )) : (
+              )}) : (
                 <tr>
                   <td colSpan={5} className="px-6 py-8 text-center text-muted-foreground">
                     No hay expedientes registrados.

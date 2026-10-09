@@ -5,6 +5,21 @@ import { Button } from "@/components/ui/button";
 
 export const instant = false;
 
+type CaseUpdate = {
+  id: string;
+  description: string;
+  created_at: string;
+  is_internal_note: boolean;
+};
+
+type Case = {
+  id: string;
+  code: string;
+  subject_type: string;
+  status: string;
+  case_updates?: CaseUpdate[];
+};
+
 export default async function ClientDashboard({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
   const { data: client } = await supabase
@@ -48,7 +63,7 @@ export default async function ClientDashboard({ params }: { params: Promise<{ id
 
         {client.cases && client.cases.length > 0 ? (
           <div className="space-y-6">
-            {client.cases.map((c: any) => (
+            {client.cases.map((c: Case) => (
               <div key={c.id} className="bg-card border border-border/50 rounded-2xl p-6 shadow-sm">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-border/50 pb-4 mb-4">
                   <div>
@@ -65,9 +80,9 @@ export default async function ClientDashboard({ params }: { params: Promise<{ id
 
                 <div className="space-y-4">
                   <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">Últimas Actuaciones</h3>
-                  {c.case_updates && c.case_updates.filter((u:any) => !u.is_internal_note).length > 0 ? (
+                  {c.case_updates && c.case_updates.filter((u: CaseUpdate) => !u.is_internal_note).length > 0 ? (
                     <ul className="space-y-4">
-                      {c.case_updates.filter((u:any) => !u.is_internal_note).map((update: any) => (
+                      {c.case_updates.filter((u: CaseUpdate) => !u.is_internal_note).map((update: CaseUpdate) => (
                         <li key={update.id} className="flex gap-4 items-start">
                           <div className="mt-1 bg-accent/20 p-2 rounded-full text-accent">
                             <Clock className="w-4 h-4" />

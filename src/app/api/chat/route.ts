@@ -33,7 +33,7 @@ REGLAS ESTRICTAS:
     const lastMessage = messages[messages.length - 1].content;
     
     // Preparar el historial (opcional, pero ayuda a Gemini a tener contexto)
-    const history = messages.slice(0, -1).map((m: any) => ({
+    const history = messages.slice(0, -1).map((m: { role: string, content: string }) => ({
       role: m.role === "assistant" ? "model" : "user",
       parts: [{ text: m.content }],
     }));

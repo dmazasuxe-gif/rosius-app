@@ -92,7 +92,7 @@ export default function Chatbot() {
                   <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${m.role === 'user' ? 'bg-primary text-white' : 'bg-secondary/10 text-secondary'}`}>
                     {m.role === 'user' ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
                   </div>
-                  <div className={`p-3 rounded-2xl text-sm ${m.role === 'user' ? 'bg-primary text-primary-foreground rounded-tr-none' : 'bg-white border border-border/50 text-foreground rounded-tl-none shadow-sm'}`}>
+                  <div className={`p-3 rounded-2xl text-sm ${m.role === 'user' ? 'bg-primary text-primary-foreground rounded-tr-none' : 'bg-card border border-border/50 text-card-foreground rounded-tl-none shadow-sm'}`}>
                     {m.content}
                   </div>
                 </div>
@@ -105,7 +105,7 @@ export default function Chatbot() {
                 <div className="shrink-0 w-8 h-8 rounded-full bg-secondary/10 flex items-center justify-center text-secondary">
                   <Bot className="h-4 w-4" />
                 </div>
-                <div className="p-3 rounded-2xl bg-white border border-border/50 text-foreground rounded-tl-none shadow-sm flex gap-1 items-center">
+                <div className="p-3 rounded-2xl bg-card border border-border/50 text-card-foreground rounded-tl-none shadow-sm flex gap-1 items-center">
                   <span className="w-1.5 h-1.5 bg-secondary/50 rounded-full animate-bounce"></span>
                   <span className="w-1.5 h-1.5 bg-secondary/50 rounded-full animate-bounce delay-75"></span>
                   <span className="w-1.5 h-1.5 bg-secondary/50 rounded-full animate-bounce delay-150"></span>
