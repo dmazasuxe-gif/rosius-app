@@ -1,0 +1,108 @@
+@import "tailwindcss";
+@plugin "tailwindcss-animate";
+
+:root {
+  --background: #fdfbf7; /* blanco marfil */
+  --foreground: #111111; /* negro elegante */
+  
+  --card: #ffffff;
+  --card-foreground: #111111;
+  
+  --popover: #ffffff;
+  --popover-foreground: #111111;
+  
+  --primary: #1a1a1a; /* negro oscuro para botones */
+  --primary-foreground: #fdfbf7;
+  
+  --secondary: #133a2a; /* verde oscuro */
+  --secondary-foreground: #fdfbf7;
+  
+  --accent: #c5a975; /* detalles dorados */
+  --accent-foreground: #ffffff;
+  
+  --muted: #f2ede4;
+  --muted-foreground: #666666;
+  
+  --border: #e0d8c8;
+  --input: #e0d8c8;
+  --ring: #c5a975;
+
+  --radius: 0.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0f0f0f;
+    --foreground: #fdfbf7;
+    
+    --card: #161616;
+    --card-foreground: #fdfbf7;
+    
+    --popover: #161616;
+    --popover-foreground: #fdfbf7;
+    
+    --primary: #fdfbf7;
+    --primary-foreground: #0f0f0f;
+    
+    --secondary: #133a2a;
+    --secondary-foreground: #fdfbf7;
+    
+    --accent: #d4b886;
+    --accent-foreground: #111111;
+    
+    --muted: #262626;
+    --muted-foreground: #a3a3a3;
+    
+    --border: #333333;
+    --input: #333333;
+    --ring: #d4b886;
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-playfair), ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Tipografía elegante para títulos */
+h1, h2, h3, h4, h5, h6, .font-heading {
+  font-family: var(--font-heading);
+}
+
+/* Transiciones suaves generales */
+* {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
