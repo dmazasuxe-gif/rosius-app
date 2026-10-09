@@ -128,7 +128,7 @@ export default function Chatbot() {
               type="submit" 
               size="icon" 
               disabled={isLoading || !input.trim()} 
-              className="absolute right-1 w-10 h-10 rounded-full bg-accent hover:bg-accent/90 text-white"
+              className="absolute right-1 w-10 h-10 rounded-full bg-accent hover:bg-accent/90 text-accent-foreground"
             >
               <Send className="h-4 w-4" />
             </Button>

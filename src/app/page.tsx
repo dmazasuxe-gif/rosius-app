@@ -63,7 +63,7 @@ export default function Home() {
                 <Search className="mr-2 h-5 w-5" />
                 Consultar el estado de mi caso
               </Link>
-              <Button size="lg" variant="outline" className="w-full sm:w-auto h-14 px-8 text-base border-accent text-accent hover:bg-accent hover:text-white">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto h-14 px-8 text-base border-accent text-accent hover:bg-accent hover:text-accent-foreground">
                 Explorar información jurídica
               </Button>
             </div>

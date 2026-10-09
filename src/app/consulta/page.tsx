@@ -117,7 +117,7 @@ export default function ConsultaPage() {
                     required
                   />
                 </div>
-                <Button type="submit" disabled={loading} className="w-full h-12 bg-accent hover:bg-accent/90 text-white text-base shadow-md">
+                <Button type="submit" disabled={loading} className="w-full h-12 bg-accent hover:bg-accent/90 text-accent-foreground text-base shadow-md">
                   {loading ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : "Verificar e Ingresar"}
                 </Button>
               </form>
