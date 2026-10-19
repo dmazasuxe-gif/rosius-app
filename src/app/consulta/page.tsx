@@ -42,9 +42,14 @@ export default function ConsultaPage() {
               <span className="font-heading text-lg font-bold tracking-widest text-primary">ROSIUS</span>
             </div>
           </Link>
-          <Link href="/" className="text-sm font-medium text-muted-foreground hover:text-foreground">
-            Volver al inicio
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link href="/login" className="text-sm font-medium text-[#d31027] hover:underline">
+              Iniciar Sesión (Trilce UCV)
+            </Link>
+            <Link href="/" className="text-sm font-medium text-muted-foreground hover:text-foreground">
+              Volver al inicio
+            </Link>
+          </div>
         </div>
       </header>
 

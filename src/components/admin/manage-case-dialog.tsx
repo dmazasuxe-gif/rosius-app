@@ -12,6 +12,13 @@ type ManageCaseDialogProps = {
   code: string;
 }
 
+type CaseUpdateItem = {
+  id: string;
+  description: string;
+  is_internal_note: boolean;
+  created_at: string;
+}
+
 export function ManageCaseDialog({ caseId, currentStatus, code }: ManageCaseDialogProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -20,7 +27,7 @@ export function ManageCaseDialog({ caseId, currentStatus, code }: ManageCaseDial
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   
   const [activeTab, setActiveTab] = useState<"update" | "history" | "settings">("update")
-  const [history, setHistory] = useState<any[]>([])
+  const [history, setHistory] = useState<CaseUpdateItem[]>([])
   const [historyLoaded, setHistoryLoaded] = useState(false)
   const [isInternal, setIsInternal] = useState(false)
   const [isPublicDoc, setIsPublicDoc] = useState(true)
@@ -67,7 +74,7 @@ export function ManageCaseDialog({ caseId, currentStatus, code }: ManageCaseDial
         alert(result.error)
         setLoading(false)
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err)
       alert("Ocurrió un error inesperado al guardar la actualización.")
       setLoading(false)

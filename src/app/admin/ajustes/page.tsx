@@ -25,11 +25,15 @@ export default function AdminAjustes() {
     async function loadSettings() {
       const { data, error } = await supabase.from("site_settings").select("*");
       if (!error && data) {
-        const newSettings = { ...settings };
-        data.forEach((row: any) => {
-          (newSettings as any)[row.key] = row.value;
+        setSettings((prev) => {
+          const next = { ...prev };
+          data.forEach((row: { key: string; value: string }) => {
+            if (row.key in next) {
+              (next as Record<string, string>)[row.key] = row.value;
+            }
+          });
+          return next;
         });
-        setSettings(newSettings);
       }
       setLoading(false);
     }

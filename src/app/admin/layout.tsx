@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Scale, Users, FileText, Settings, LogOut } from "lucide-react";
+import { Scale, Users, FileText, Settings, LogOut, LayoutTemplate } from "lucide-react";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -28,6 +28,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <Link href="/admin/ajustes" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors text-sm">
             <Settings className="h-4 w-4" />
             Página y Ajustes
+          </Link>
+          <Link href="/admin/login-settings" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors text-sm text-accent font-medium">
+            <LayoutTemplate className="h-4 w-4" />
+            Personalizar Login
           </Link>
         </nav>
         

@@ -50,9 +50,12 @@ export default async function Home() {
             <Link href="/contacto" className="hover:text-accent transition-colors">Contacto</Link>
           </nav>
 
-          <div className="flex items-center gap-4">
-            <Link href="/consulta" className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2">
-              Consultar mi caso
+          <div className="flex items-center gap-3">
+            <Link href="/login" className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors bg-[#d31027] hover:bg-[#b00d1f] text-white shadow-sm h-9 px-4 py-2">
+              Iniciar Sesión (Trilce UCV)
+            </Link>
+            <Link href="/consulta" className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors border border-input bg-background hover:bg-muted text-foreground h-9 px-3 py-2">
+              Consultar Caso
             </Link>
           </div>
         </div>

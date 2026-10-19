@@ -51,7 +51,7 @@ export function NewCaseDialog() {
         setIsOpen(false)
         setSelectedFile(null)
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err)
       setError("Ocurrió un error inesperado al crear el caso.")
       setLoading(false)
