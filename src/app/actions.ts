@@ -93,6 +93,75 @@ export async function clientLogin(formData: FormData) {
   }
 }
 
+export async function registerClient(formData: FormData) {
+  const dni = (formData.get("dni") as string)?.trim()
+  const fullName = (formData.get("fullName") as string)?.trim()
+  const email = (formData.get("email") as string)?.trim() || null
+  const phone = (formData.get("phone") as string)?.trim() || null
+  const password = (formData.get("password") as string)?.trim()
+
+  if (!dni || dni.length !== 8 || !/^\d{8}$/.test(dni)) {
+    return { error: "El DNI debe tener exactamente 8 dígitos numéricos." }
+  }
+  if (!fullName || fullName.length < 3) {
+    return { error: "Por favor ingresa tu nombre y apellidos completos." }
+  }
+  if (!password || password.length < 4) {
+    return { error: "La contraseña debe tener al menos 4 caracteres." }
+  }
+
+  // 1. Verificar si ya existe cliente con este DNI
+  const { data: existingClient } = await supabase
+    .from("clients")
+    .select("id, password_hash, full_name")
+    .eq("dni", dni)
+    .single()
+
+  if (existingClient) {
+    // Si ya tiene contraseña registrada
+    if (existingClient.password_hash) {
+      return { error: "Ya existe una cuenta con este DNI. Por favor inicia sesión con tu contraseña." }
+    }
+
+    // Si fue registrado previamente en un caso por el administrador pero aún no tenía contraseña
+    const { error: updateError } = await supabase
+      .from("clients")
+      .update({
+        full_name: fullName,
+        email: email || undefined,
+        phone: phone || undefined,
+        password_hash: password,
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", existingClient.id)
+
+    if (updateError) {
+      return { error: "Error al activar la cuenta: " + updateError.message }
+    }
+
+    return { success: true, clientId: existingClient.id, clientName: fullName }
+  }
+
+  // 2. Crear nuevo cliente
+  const { data: newClient, error: insertError } = await supabase
+    .from("clients")
+    .insert([{
+      dni,
+      full_name: fullName,
+      email,
+      phone,
+      password_hash: password
+    }])
+    .select("id")
+    .single()
+
+  if (insertError || !newClient) {
+    return { error: "Error al crear la cuenta: " + (insertError?.message || "Intenta nuevamente.") }
+  }
+
+  return { success: true, clientId: newClient.id, clientName: fullName }
+}
+
 export async function getAllCases() {
   const { data: cases, error } = await supabase
     .from("cases")

@@ -573,59 +573,7 @@ export default function AdminLoginSettingsPage() {
         </div>
       </section>
 
-      {/* SECTION 4: SOPORTE, MANUAL Y AYUDA */}
-      <section className="bg-card border border-border/50 rounded-2xl p-6 shadow-sm space-y-6">
-        <div className="border-b border-border/50 pb-4">
-          <h2 className="text-xl font-heading font-semibold text-foreground">
-            Soporte, Manual y Enlaces de Ayuda
-          </h2>
-          <p className="text-xs text-muted-foreground mt-1">
-            Gestiona el botón flotante de ayuda y el enlace de descarga del manual de usuario.
-          </p>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Texto del Manual</label>
-            <input
-              type="text"
-              value={settings.manualText}
-              onChange={(e) => setSettings({ ...settings, manualText: e.target.value })}
-              className="w-full px-4 py-2 text-sm rounded-lg border border-input bg-background"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Texto del Enlace Tutorial</label>
-            <input
-              type="text"
-              value={settings.manualLinkText}
-              onChange={(e) => setSettings({ ...settings, manualLinkText: e.target.value })}
-              className="w-full px-4 py-2 text-sm rounded-lg border border-input bg-background"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Texto del Botón de Ayuda</label>
-            <input
-              type="text"
-              value={settings.helpText}
-              onChange={(e) => setSettings({ ...settings, helpText: e.target.value })}
-              className="w-full px-4 py-2 text-sm rounded-lg border border-input bg-background"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Enlace o WhatsApp de Ayuda</label>
-            <input
-              type="text"
-              value={settings.helpUrl}
-              onChange={(e) => setSettings({ ...settings, helpUrl: e.target.value })}
-              className="w-full px-4 py-2 text-sm rounded-lg border border-input bg-background"
-            />
-          </div>
-        </div>
-      </section>
 
       {/* Bottom Actions Bar */}
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-4 border-t border-border/50">
