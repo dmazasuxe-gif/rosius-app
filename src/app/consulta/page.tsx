@@ -35,8 +35,8 @@ export default function ConsultaPage() {
         <div className="container mx-auto px-4 h-20 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
             <div className="relative w-10 h-10 rounded-full overflow-hidden border border-border shadow-sm flex items-center justify-center bg-white">
-              <img src="/logo-light.png" alt="ROSIUS Logo" className="w-full h-full object-cover dark:hidden" />
-              <img src="/logo-dark.png" alt="ROSIUS Logo" className="w-full h-full object-cover hidden dark:block" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo-light.png" alt="ROSIUS Logo" className="w-full h-full object-contain p-1" />
             </div>
             <div className="flex flex-col">
               <span className="font-heading text-lg font-bold tracking-widest text-primary">ROSIUS</span>
@@ -44,7 +44,7 @@ export default function ConsultaPage() {
           </Link>
           <div className="flex items-center gap-4">
             <Link href="/login" className="text-sm font-medium text-[#d31027] hover:underline">
-              Iniciar Sesión (Trilce UCV)
+              Iniciar Sesión
             </Link>
             <Link href="/" className="text-sm font-medium text-muted-foreground hover:text-foreground">
               Volver al inicio

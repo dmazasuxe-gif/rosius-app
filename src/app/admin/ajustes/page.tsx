@@ -11,6 +11,7 @@ export default function AdminAjustes() {
   const [saving, setSaving] = useState(false);
   const [settings, setSettings] = useState({
     profile_image_url: "",
+    site_logo_url: "",
     hero_title: "Dra. Rosita Ysela Maza Suxe",
     hero_bio: "Soy abogada titulada...",
     contact_phone: "+51 999 999 999",
@@ -19,7 +20,9 @@ export default function AdminAjustes() {
   });
   
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const logoInputRef = useRef<HTMLInputElement>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
 
   useEffect(() => {
     async function loadSettings() {
@@ -73,6 +76,28 @@ export default function AdminAjustes() {
       alert("Error al subir la imagen. Verifica si el bucket 'documents' existe y tiene permisos.");
     }
     setUploadingImage(false);
+  };
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingLogo(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const filePath = `branding/logo_${Date.now()}.${fileExt}`;
+      
+      const { error: uploadError } = await supabase.storage.from("documents").upload(filePath, file);
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage.from("documents").getPublicUrl(filePath);
+      
+      setSettings(prev => ({ ...prev, site_logo_url: data.publicUrl }));
+    } catch (err) {
+      console.error(err);
+      alert("Error al subir el logo.");
+    }
+    setUploadingLogo(false);
   };
 
   if (loading) return <div className="p-8 text-center text-muted-foreground">Cargando ajustes...</div>;
@@ -136,6 +161,40 @@ export default function AdminAjustes() {
               >
                 <Upload className="w-4 h-4 mr-2" />
                 {uploadingImage ? "Subiendo..." : "Subir nueva foto"}
+              </Button>
+            </div>
+          </div>
+
+          <div className="space-y-2 pt-2 border-t border-border/40">
+            <label className="text-sm font-medium text-foreground">Logo de la Cabecera / Navegación</label>
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center text-muted-foreground border border-border overflow-hidden relative shadow-sm">
+                {settings.site_logo_url ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img src={settings.site_logo_url} alt="Logo" className="w-full h-full object-contain p-1" />
+                ) : (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img src="/logo-light.png" alt="Logo" className="w-full h-full object-contain p-1" />
+                )}
+                {uploadingLogo && (
+                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white text-xs">...</div>
+                )}
+              </div>
+              <input 
+                type="file" 
+                accept="image/*" 
+                ref={logoInputRef} 
+                className="hidden" 
+                onChange={handleLogoUpload} 
+              />
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => logoInputRef.current?.click()}
+                disabled={uploadingLogo}
+              >
+                <Upload className="w-4 h-4 mr-2" />
+                {uploadingLogo ? "Subiendo..." : "Subir nuevo logo"}
               </Button>
             </div>
           </div>

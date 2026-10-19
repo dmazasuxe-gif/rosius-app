@@ -23,6 +23,7 @@ export default async function Home() {
   }
 
   const cleanPhone = settings.contact_phone.replace(/\D/g, "");
+  const siteLogo = settings.site_logo_url || settings.login_badge_logo_url || "/logo-light.png";
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -30,10 +31,9 @@ export default async function Home() {
       <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-md">
         <div className="container mx-auto px-4 h-20 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
-            {/* Logo en versión clara para modo oscuro, versión oscura para modo claro */}
             <div className="relative w-12 h-12 rounded-full overflow-hidden border border-border shadow-sm flex items-center justify-center bg-white">
-              <img src="/logo-light.png" alt="ROSIUS Logo" className="w-full h-full object-cover dark:hidden" />
-              <img src="/logo-dark.png" alt="ROSIUS Logo" className="w-full h-full object-cover hidden dark:block" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={siteLogo} alt="Logo" className="w-full h-full object-contain p-1" />
             </div>
             <div className="flex flex-col">
               <span className="font-heading text-xl font-bold tracking-widest text-primary">ROSIUS</span>
@@ -52,7 +52,7 @@ export default async function Home() {
 
           <div className="flex items-center gap-3">
             <Link href="/login" className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors bg-[#d31027] hover:bg-[#b00d1f] text-white shadow-sm h-9 px-4 py-2">
-              Iniciar Sesión (Trilce UCV)
+              Iniciar Sesión
             </Link>
             <Link href="/consulta" className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors border border-input bg-background hover:bg-muted text-foreground h-9 px-3 py-2">
               Consultar Caso
