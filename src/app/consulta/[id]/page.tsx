@@ -61,8 +61,14 @@ export default async function ClientDashboard({ params }: { params: Promise<{ id
             </div>
             <span className="font-heading text-lg font-bold tracking-widest text-accent">ROSIUS</span>
           </Link>
-          <div className="text-sm font-medium">
-            Hola, {client.full_name}
+          <div className="flex items-center gap-4 text-sm font-medium">
+            <span className="text-white/90">Hola, {client.full_name}</span>
+            <Link 
+              href="/login" 
+              className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs text-white transition-colors"
+            >
+              Cerrar Sesión
+            </Link>
           </div>
         </div>
       </header>
@@ -141,8 +147,25 @@ export default async function ClientDashboard({ params }: { params: Promise<{ id
             ))}
           </div>
         ) : (
-          <div className="text-center py-12 bg-muted/20 rounded-2xl border border-border/50">
-            <p className="text-muted-foreground">No tienes expedientes activos en este momento.</p>
+          <div className="text-center py-12 bg-card rounded-2xl border border-border/50 shadow-sm p-8 space-y-4">
+            <div className="w-16 h-16 rounded-full bg-accent/10 text-accent flex items-center justify-center mx-auto">
+              <FileText className="w-8 h-8" />
+            </div>
+            <h3 className="text-xl font-bold font-heading">¡Cuenta activa y verificada!</h3>
+            <p className="text-muted-foreground text-sm max-w-md mx-auto">
+              Hola, <span className="font-semibold text-foreground">{client.full_name}</span>. Tu cuenta está registrada correctamente. Si tu abogada aún no ha registrado el código de tu expediente, lo verás reflejado aquí tan pronto sea asignado.
+            </p>
+            <div className="pt-2">
+              <a 
+                href={`https://wa.me/51964147880?text=Hola%20Dra.%20Rosita,%20acabo%20de%20crear%20mi%20cuenta%20con%20DNI%20${client.dni}%20y%20deseo%20consultar%20sobre%20mi%20expediente`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button className="bg-[#d31027] hover:bg-[#b00d1f] text-white">
+                  Contactar a la Abogada por WhatsApp
+                </Button>
+              </a>
+            </div>
           </div>
         )}
       </main>

@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { User, KeyRound, Eye, EyeOff, Loader2, Mail, Phone, UserPlus, LogIn, CreditCard } from "lucide-react"
 import { LoginSettings } from "@/types/login-settings"
 import { clientLogin, registerClient } from "@/app/actions"
@@ -11,7 +10,6 @@ interface LoginFormProps {
 }
 
 export function LoginForm({ settings }: LoginFormProps) {
-  const router = useRouter()
   const [mode, setMode] = useState<"login" | "register">("login")
   
   // Login form state
@@ -31,10 +29,20 @@ export function LoginForm({ settings }: LoginFormProps) {
   const [error, setError] = useState<string | null>(null)
   const [successMsg, setSuccessMsg] = useState<string | null>(null)
 
+  const switchMode = (newMode: "login" | "register") => {
+    setMode(newMode)
+    setError(null)
+    setSuccessMsg(null)
+    setLoading(false)
+  }
+
   const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (!username.trim() || !password.trim()) {
-      setError("Por favor completa tu usuario/DNI y contraseña.")
+    const cleanUser = username.trim()
+    const cleanPass = password.trim()
+
+    if (!cleanUser || !cleanPass) {
+      setError("Por favor completa tu usuario o DNI y contraseña.")
       return
     }
 
@@ -43,8 +51,8 @@ export function LoginForm({ settings }: LoginFormProps) {
     setSuccessMsg(null)
 
     const formData = new FormData()
-    formData.append("username", username)
-    formData.append("password", password)
+    formData.append("username", cleanUser)
+    formData.append("password", cleanPass)
 
     try {
       const result = await clientLogin(formData)
@@ -52,7 +60,14 @@ export function LoginForm({ settings }: LoginFormProps) {
         setError(result.error)
         setLoading(false)
       } else if (result.success && result.clientId) {
-        router.push(`/consulta/${result.clientId}`)
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem("rosius_client_id", result.clientId)
+          // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+          window.location.href = `/consulta/${result.clientId}`
+        }
+      } else {
+        setError("No se pudo iniciar sesión. Verifica tus datos.")
+        setLoading(false)
       }
     } catch (err) {
       console.error(err)
@@ -63,15 +78,19 @@ export function LoginForm({ settings }: LoginFormProps) {
 
   const handleRegisterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (!regDni.trim() || regDni.trim().length !== 8) {
+    const cleanDni = regDni.trim()
+    const cleanName = regFullName.trim()
+    const cleanPass = regPassword.trim()
+
+    if (!cleanDni || cleanDni.length !== 8) {
       setError("El DNI debe contener exactamente 8 dígitos.")
       return
     }
-    if (!regFullName.trim()) {
+    if (!cleanName) {
       setError("Por favor ingresa tu nombre completo.")
       return
     }
-    if (!regPassword.trim() || regPassword.trim().length < 4) {
+    if (!cleanPass || cleanPass.length < 4) {
       setError("La contraseña debe tener mínimo 4 caracteres.")
       return
     }
@@ -81,11 +100,11 @@ export function LoginForm({ settings }: LoginFormProps) {
     setSuccessMsg(null)
 
     const formData = new FormData()
-    formData.append("dni", regDni)
-    formData.append("fullName", regFullName)
-    formData.append("email", regEmail)
-    formData.append("phone", regPhone)
-    formData.append("password", regPassword)
+    formData.append("dni", cleanDni)
+    formData.append("fullName", cleanName)
+    formData.append("email", regEmail.trim())
+    formData.append("phone", regPhone.trim())
+    formData.append("password", cleanPass)
 
     try {
       const result = await registerClient(formData)
@@ -93,10 +112,15 @@ export function LoginForm({ settings }: LoginFormProps) {
         setError(result.error)
         setLoading(false)
       } else if (result.success && result.clientId) {
-        setSuccessMsg("¡Cuenta creada con éxito! Redirigiendo a tu panel...")
-        setTimeout(() => {
-          router.push(`/consulta/${result.clientId}`)
-        }, 800)
+        setSuccessMsg("¡Cuenta creada con éxito! Ingresando a tu panel...")
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem("rosius_client_id", result.clientId)
+          // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+          window.location.href = `/consulta/${result.clientId}`
+        }
+      } else {
+        setError("No se pudo completar el registro.")
+        setLoading(false)
       }
     } catch (err) {
       console.error(err)
@@ -135,7 +159,7 @@ export function LoginForm({ settings }: LoginFormProps) {
         <div className="flex p-1 bg-slate-100 rounded-xl border border-slate-200">
           <button
             type="button"
-            onClick={() => { setMode("login"); setError(null); }}
+            onClick={() => switchMode("login")}
             className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
               mode === "login"
                 ? "bg-white text-[#0c2340] shadow-sm"
@@ -147,7 +171,7 @@ export function LoginForm({ settings }: LoginFormProps) {
           </button>
           <button
             type="button"
-            onClick={() => { setMode("register"); setError(null); }}
+            onClick={() => switchMode("register")}
             className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
               mode === "register"
                 ? "bg-white text-[#d31027] shadow-sm"
@@ -178,8 +202,9 @@ export function LoginForm({ settings }: LoginFormProps) {
           </div>
         )}
         {successMsg && (
-          <div className="p-3 text-xs rounded-xl bg-green-50 border border-green-200 text-green-700 animate-in fade-in">
-            {successMsg}
+          <div className="p-3 text-xs rounded-xl bg-green-50 border border-green-200 text-green-700 animate-in fade-in flex items-center gap-2">
+            <Loader2 className="w-4 h-4 animate-spin shrink-0 text-green-600" />
+            <span>{successMsg}</span>
           </div>
         )}
 
@@ -251,7 +276,7 @@ export function LoginForm({ settings }: LoginFormProps) {
               {loading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Verificando...</span>
+                  <span>Ingresando a tu panel...</span>
                 </>
               ) : (
                 <span>Iniciar sesión</span>
@@ -264,7 +289,7 @@ export function LoginForm({ settings }: LoginFormProps) {
                 ¿No tienes una cuenta aún?{" "}
                 <button
                   type="button"
-                  onClick={() => { setMode("register"); setError(null); }}
+                  onClick={() => switchMode("register")}
                   className="text-[#d31027] font-semibold hover:underline"
                 >
                   Regístrate aquí
@@ -366,7 +391,7 @@ export function LoginForm({ settings }: LoginFormProps) {
               {loading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Creando cuenta...</span>
+                  <span>Creando cuenta e ingresando...</span>
                 </>
               ) : (
                 <span>Crear mi cuenta e ingresar</span>
@@ -379,7 +404,7 @@ export function LoginForm({ settings }: LoginFormProps) {
                 ¿Ya tienes una cuenta registrada?{" "}
                 <button
                   type="button"
-                  onClick={() => { setMode("login"); setError(null); }}
+                  onClick={() => switchMode("login")}
                   className="text-[#0c2340] font-semibold hover:underline"
                 >
                   Iniciar sesión
